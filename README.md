@@ -1,5 +1,5 @@
 # git-commits
 
-Wrapper around [`git2`], providing a simple interface for iterating over commits in a repository, along with related utilities.
+Simple library wrapped around [`git2`] for iterating git commits and changes in a repository.
 
 [`git2`]: https://crates.io/crates/git2
