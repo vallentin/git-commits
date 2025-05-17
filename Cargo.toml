@@ -11,4 +11,4 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
-git2 = "0.17"
+git2 = "0.20"
