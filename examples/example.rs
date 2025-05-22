@@ -23,40 +23,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             // The following `match` can be simplified, by simply doing:
             // println!("  {}", change);
 
-            let kind = change.kind();
             match change {
                 Change::Added(change) => {
                     println!(
                         "  {} {} ({} bytes)",
-                        kind.letter(),
-                        change.path.display(),
-                        change.size,
+                        change.kind().letter(),
+                        change.path().display(),
+                        change.size(),
                     );
                 }
                 Change::Modified(change) => {
                     println!(
                         "  {} {} ({} -> {} bytes)",
-                        kind.letter(),
-                        change.path.display(),
-                        change.old_size,
-                        change.new_size,
+                        change.kind().letter(),
+                        change.path().display(),
+                        change.old_size(),
+                        change.new_size(),
                     );
                 }
                 Change::Deleted(change) => {
                     println!(
                         "  {} {} ({} bytes)",
-                        kind.letter(),
-                        change.path.display(),
-                        change.size,
+                        change.kind().letter(),
+                        change.path().display(),
+                        change.size(),
                     );
                 }
                 Change::Renamed(change) => {
                     println!(
                         "  {} {} -> {} ({} bytes)",
-                        kind.letter(),
-                        change.old_path.display(),
-                        change.new_path.display(),
-                        change.size,
+                        change.kind().letter(),
+                        change.old_path().display(),
+                        change.new_path().display(),
+                        change.size(),
                     );
                 }
             }
