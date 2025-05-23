@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::fmt;
 
 use git2::Repository;
 
@@ -103,6 +104,22 @@ impl<'repo> Commit<'repo> {
     }
 }
 
+impl fmt::Display for Commit<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.time() {
+            Some(time) => write!(f, "[{time}]")?,
+            None => write!(f, "[invalid time]")?,
+        }
+
+        let msg = self.message_lossy();
+        let first_line = msg.trim().lines().next().unwrap_or_default();
+
+        write!(f, " {} {first_line}", self.author().name_lossy())?;
+
+        Ok(())
+    }
+}
+
 pub struct Signature<'a> {
     signature: git2::Signature<'a>,
 }
@@ -171,5 +188,18 @@ impl Signature<'_> {
     pub fn time_local(&self) -> Option<DateTime<Local>> {
         let time = self.time()?.with_timezone(&Local);
         Some(time)
+    }
+}
+
+impl fmt::Display for Signature<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.time() {
+            Some(time) => write!(f, "[{time}]")?,
+            None => write!(f, "[invalid time]")?,
+        }
+
+        write!(f, " {} <{}>", self.name_lossy(), self.email_lossy())?;
+
+        Ok(())
     }
 }
