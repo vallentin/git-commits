@@ -6,16 +6,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for commit in repo.commits()? {
         let commit = commit?;
-        let msg = commit.message().unwrap().trim();
 
-        let author = commit.author();
+        let msg = commit.message_lossy();
+        let first_line = msg.trim().lines().next().unwrap_or_default();
+
         let committer = commit.committer();
+        let author = commit.author();
 
         println!();
-        print!("[{}] ", &commit.sha()[..7]);
-        println!("{}", msg);
-        println!("Author:    {}", author.name_lossy());
-        println!("Committer: {}", committer.name_lossy());
+        println!("SHA:     {}", commit.sha());
+        println!("Time:    {}", committer.time_local().unwrap()); // same as `commit.time_local()`
+        println!("Author:  {}", author.name_lossy());
+        println!("Message: {first_line}");
+        println!();
 
         for change in commit.changes()? {
             let change = change?;
