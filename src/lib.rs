@@ -5,6 +5,7 @@ mod changes;
 mod commit;
 
 pub use git2::Error as GitError;
+pub use git2::Sort;
 
 pub use crate::change::{Added, Change, ChangeKind, Deleted, Modified, Renamed};
 pub use crate::changes::Changes;
@@ -13,7 +14,7 @@ pub use crate::commit::{Commit, Signature};
 use std::iter::FusedIterator;
 use std::path::Path;
 
-use git2::{Repository, Revwalk, Sort};
+use git2::{Repository, Revwalk};
 
 #[inline]
 pub fn open(path: impl AsRef<Path>) -> Result<Repo, GitError> {
@@ -42,9 +43,21 @@ impl Repo {
         Ok(Self(repo))
     }
 
+    /// Returns an iterator that produces all commits
+    /// in the repo.
+    ///
+    /// _See [`.commits_ext()`](Repo::commits_ext) to be
+    /// able to specify the order._
     #[inline]
     pub fn commits(&self) -> Result<Commits<'_>, GitError> {
-        Commits::new(&self.0)
+        self.commits_ext(Sort::NONE)
+    }
+
+    /// Returns an iterator that produces all commits
+    /// in the repo.
+    #[inline]
+    pub fn commits_ext(&self, sort: Sort) -> Result<Commits<'_>, GitError> {
+        Commits::new(&self.0, sort)
     }
 }
 
@@ -54,10 +67,10 @@ pub struct Commits<'repo> {
 }
 
 impl<'repo> Commits<'repo> {
-    fn new(repo: &'repo Repository) -> Result<Self, GitError> {
+    fn new(repo: &'repo Repository, sort: Sort) -> Result<Self, GitError> {
         let mut revwalk = repo.revwalk()?;
         revwalk.push_head()?;
-        revwalk.set_sorting(Sort::TIME | Sort::REVERSE)?;
+        revwalk.set_sorting(sort)?;
 
         Ok(Self { repo, revwalk })
     }
