@@ -20,6 +20,7 @@ impl<'repo> Commit<'repo> {
         Self { repo, commit }
     }
 
+    #[doc(alias = "hash")]
     #[inline]
     pub fn sha(&self) -> String {
         self.commit.id().to_string()
@@ -41,6 +42,7 @@ impl<'repo> Commit<'repo> {
         String::from_utf8_lossy(msg).into_owned()
     }
 
+    /// The author is the person who wrote the code.
     #[inline]
     pub fn author(&self) -> Signature<'_> {
         Signature {
@@ -48,6 +50,8 @@ impl<'repo> Commit<'repo> {
         }
     }
 
+    /// The committer is the person who committed the code,
+    /// on behalf of the author.
     #[inline]
     pub fn committer(&self) -> Signature<'_> {
         Signature {
@@ -98,6 +102,8 @@ impl<'repo> Commit<'repo> {
         Some(time)
     }
 
+    /// Returns an iterator that produces all changes
+    /// this commit performed.
     #[inline]
     pub fn changes(&self) -> Result<Changes<'repo, '_>, GitError> {
         Changes::from_commit(self)
@@ -125,6 +131,7 @@ pub struct Signature<'a> {
 }
 
 impl Signature<'_> {
+    /// Returns `None` if the name is not valid UTF-8.
     #[inline]
     pub fn name(&self) -> Option<&str> {
         self.signature.name()
@@ -140,6 +147,7 @@ impl Signature<'_> {
         String::from_utf8_lossy(self.name_bytes())
     }
 
+    /// Returns `None` if the email is not valid UTF-8.
     #[inline]
     pub fn email(&self) -> Option<&str> {
         self.signature.email()

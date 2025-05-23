@@ -153,6 +153,12 @@ pub enum ChangeKind {
 }
 
 impl ChangeKind {
+    /// ```text
+    /// Added => 'A'
+    /// Modified => 'M'
+    /// Deleted => 'D'
+    /// Renamed => 'R'
+    /// ```
     #[inline]
     pub const fn letter(self) -> char {
         match self {
@@ -163,6 +169,12 @@ impl ChangeKind {
         }
     }
 
+    /// ```text
+    /// `Added => '+'
+    /// `Modified => '~'
+    /// `Deleted => '-'
+    /// `Renamed => '>'
+    /// ```
     #[inline]
     pub const fn symbol(self) -> char {
         match self {
