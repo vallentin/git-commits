@@ -23,9 +23,22 @@ pub fn open(path: impl AsRef<Path>) -> Result<Repo, GitError> {
 pub struct Repo(Repository);
 
 impl Repo {
+    /// Attempt to open an already-existing repository at `path`.
+    ///
+    /// The path can point to either a normal or bare repository.
     #[inline]
     pub fn open(path: impl AsRef<Path>) -> Result<Self, GitError> {
         let repo = Repository::open(path)?;
+        Ok(Self(repo))
+    }
+
+    /// Attempt to open an already-existing repository at or above `path`.
+    ///
+    /// This starts at `path` and looks up the filesystem hierarchy
+    /// until it finds a repository.
+    #[inline]
+    pub fn discover(path: impl AsRef<Path>) -> Result<Self, GitError> {
+        let repo = Repository::discover(path)?;
         Ok(Self(repo))
     }
 
